@@ -167,6 +167,17 @@ do_snapshots () # properties, flags, snapname, oldglob, [targets...]
 
 	for ii in $TARGETS
 	do
+		name_collision_skip=0
+		# Check if a snapshot with the same name already exists
+		if echo "$SNAPSHOTS_OLD" | grep -q "$ii@$NAME"
+		then
+			name_collision_skip=1
+			if [ $opt_verbose -gt 0 ]
+			then
+				echo "Skipping target $ii, $ii@$NAME snapshot already exists."
+			fi
+		fi
+
 		# Check if size check is > 0
 		size_check_skip=0
 		bytes_written=`zfs get -Hp -o value written $ii`
@@ -196,7 +207,7 @@ do_snapshots () # properties, flags, snapname, oldglob, [targets...]
 			fi
 		fi
 
-		if [ -n "$opt_do_snapshots" -a "$size_check_skip" -eq 0 ]
+		if [ -n "$opt_do_snapshots" -a "$size_check_skip" -eq 0 -a "$name_collision_skip" -eq 0 ]
 		then
 			if [ "$opt_pre_snapshot" != "" ]
 			then

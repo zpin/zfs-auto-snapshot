@@ -68,6 +68,8 @@ print_usage ()
   -k, --keep=NUM     Keep NUM recent snapshots and destroy older snapshots.
   -l, --label=LAB    LAB is usually 'hourly', 'daily', or 'monthly'.
   -p, --prefix=PRE   PRE is 'zfs-auto-snap' by default.
+      --local-tz     Use system's local timezone instead of UTC in snapshot
+                     names.
   -q, --quiet        Suppress warnings and notices at the console.
       --send-full=F  Send zfs full backup. Unimplemented.
       --send-incr=F  Send zfs incremental backup. Unimplemented.
@@ -247,7 +249,7 @@ fi
 
 GETOPT=$($GETOPT_BIN \
 	--longoptions=default-exclude,dry-run,fast,skip-scrub,recursive \
-	--longoptions=event:,keep:,label:,prefix:,sep: \
+	--longoptions=event:,keep:,label:,prefix:,local-tz:,sep: \
 	--longoptions=debug,help,quiet,syslog,verbose \
 	--longoptions=pre-snapshot:,post-snapshot:,destroy-only \
 	--longoptions=min-size:,changed \
@@ -332,6 +334,10 @@ do
 			done
 			opt_prefix="$2"
 			shift 2
+			;;
+		(--local-tz)
+			opt_local_tz='1'
+			shift 1
 			;;
 		(-q|--quiet)
 			opt_debug=''
@@ -612,8 +618,15 @@ SNAPPROP="-o com.sun:auto-snapshot-desc='$opt_event'"
 
 # ISO style date; fifteen characters: YYYY-MM-DD-HHMM
 # On Solaris %H%M expands to 12h34.
-# We use the shortfirm -u here because --utc is not supported on macos.
-DATE=$(date -u +%F-%H%M)
+# If the --local-tz flag is set use the system's timezone.
+# Otherwise, the default is to use UTC.
+if [ -n $"opt_local_tz" ]
+then
+	DATE=$(date +%F-%H%M)
+else
+	# We use the shortfirm -u here because --utc is not supported on macos.
+	DATE=$(date -u +%F-%H%M)
+fi
 
 # The snapshot name after the @ symbol.
 SNAPNAME="${opt_prefix:+$opt_prefix$opt_sep}${opt_label:+$opt_label}-$DATE"

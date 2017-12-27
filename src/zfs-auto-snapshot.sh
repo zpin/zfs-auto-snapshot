@@ -249,8 +249,8 @@ fi
 
 GETOPT=$($GETOPT_BIN \
 	--longoptions=default-exclude,dry-run,fast,skip-scrub,recursive \
-	--longoptions=event:,keep:,label:,prefix:,local-tz:,sep: \
-	--longoptions=debug,help,quiet,syslog,verbose \
+	--longoptions=event:,keep:,label:,prefix:,sep: \
+	--longoptions=local-tz,debug,help,quiet,syslog,verbose \
 	--longoptions=pre-snapshot:,post-snapshot:,destroy-only \
 	--longoptions=min-size:,changed \
 	--options=dnshe:l:k:p:rs:qgcvm: \
@@ -620,7 +620,7 @@ SNAPPROP="-o com.sun:auto-snapshot-desc='$opt_event'"
 # On Solaris %H%M expands to 12h34.
 # If the --local-tz flag is set use the system's timezone.
 # Otherwise, the default is to use UTC.
-if [ -n $"opt_local_tz" ]
+if [ -n "$opt_local_tz" ]
 then
 	DATE=$(date +%F-%H%M)
 else

@@ -693,10 +693,12 @@ test -n "$opt_dry_run" \
 do_snapshots "$SNAPPROP" ""   "$SNAPNAME" "$SNAPGLOB" "$TARGETS_REGULAR"
 do_snapshots "$SNAPPROP" "-r" "$SNAPNAME" "$SNAPGLOB" "$TARGETS_RECURSIVE"
 
-print_log notice "@$SNAPNAME," \
-	"$SNAPSHOT_COUNT created," \
-	"$DESTRUCTION_COUNT destroyed," \
-	"$WARNING_COUNT warnings."
+if [ $WARNING_COUNT -gt 0 ]
+then
+	print_log notice "@$SNAPNAME: +$SNAPSHOT_COUNT -$DESTRUCTION_COUNT [$WARNING_COUNT warnings]"
+else
+	print_log notice "@$SNAPNAME: +$SNAPSHOT_COUNT -$DESTRUCTION_COUNT"
+fi
 
 exit 0
 # }

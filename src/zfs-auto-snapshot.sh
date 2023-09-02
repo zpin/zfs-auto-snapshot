@@ -68,6 +68,8 @@ print_usage ()
   -h, --help         Print this usage message.
   -k, --keep=NUM     Keep NUM recent snapshots and destroy older snapshots.
   -l, --label=LAB    LAB is usually 'hourly', 'daily', or 'monthly'.
+  -m, --min-size=MIN MIN KB written size last snapshot. Defaults to 0kb,
+                     will ALWAYS snapshot.
   -p, --prefix=PRE   PRE is 'zfs-auto-snap' by default.
       --local-tz     Use system's local timezone instead of UTC in snapshot
                      names.
@@ -189,7 +191,7 @@ do_snapshots () # properties, flags, snapname, oldglob, [targets...]
 				size_check_skip=1
 				if [ $opt_verbose -gt 0 ]
 				then
-					echo "Skipping target $ii, only $kb_written kB written since last snap. opt_min_size is $opt_min_size"
+					echo "Skipping target $ii, only $kb_written kB written since last snap. opt_min_size is $opt_min_size kB."
 				fi
 			fi
 		fi

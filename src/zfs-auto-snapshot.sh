@@ -215,23 +215,25 @@ do_snapshots () # properties, flags, snapname, oldglob, [targets...]
 		KEEP="$opt_keep"
 
 		# ASSERT: The old snapshot list is sorted by increasing age.
-		for jj in $SNAPSHOTS_OLD
-		do
-			# Check whether this is an old snapshot of the filesystem.
-			if [ -z "${jj#$ii@$GLOB}" ]
-			then
-				KEEP=$(( $KEEP - 1 ))
-				if [ "$KEEP" -le '0' ]
+		if [ "$size_check_skip" -eq 0 ]; then  # if skip creating snapshots, then skip deleting old ones also
+			for jj in $SNAPSHOTS_OLD
+			do
+				# Check whether this is an old snapshot of the filesystem.
+				if [ -z "${jj#$ii@$GLOB}" ]
 				then
-					if do_run "zfs destroy -d $FLAGS '$jj'"
+					KEEP=$(( $KEEP - 1 ))
+					if [ "$KEEP" -le '0' ]
 					then
-						DESTRUCTION_COUNT=$(( $DESTRUCTION_COUNT + 1 ))
-					else
-						WARNING_COUNT=$(( $WARNING_COUNT + 1 ))
+						if do_run "zfs destroy -d $FLAGS '$jj'"
+						then
+							DESTRUCTION_COUNT=$(( $DESTRUCTION_COUNT + 1 ))
+						else
+							WARNING_COUNT=$(( $WARNING_COUNT + 1 ))
+						fi
 					fi
 				fi
-			fi
-		done
+			done
+		fi
 	done
 }
 
@@ -250,8 +252,8 @@ GETOPT=$($GETOPT_BIN \
 	--longoptions=event:,keep:,label:,prefix:,sep: \
 	--longoptions=debug,help,quiet,syslog,verbose \
 	--longoptions=pre-snapshot:,post-snapshot:,destroy-only \
-	--longoptions=min-size: \
-	--options=dnshe:l:k:p:rs:qgvm: \
+	--longoptions=min-size:,changed \
+	--options=dnshe:l:k:p:rs:qgcvm: \
 	-- "$@" ) \
 	|| exit 128
 

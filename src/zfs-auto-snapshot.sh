@@ -207,15 +207,13 @@ do_snapshots () # properties, flags, snapname, oldglob, [targets...]
 				WARNING_COUNT=$(( $WARNING_COUNT + 1 ))
 				continue
 			fi
-		fi
 
-		# Retain at most $opt_keep number of old snapshots of this filesystem,
-		# including the one that was just recently created.
-		test -z "$opt_keep" && continue
-		KEEP="$opt_keep"
+			# Retain at most $opt_keep number of old snapshots of this filesystem,
+			# including the one that was just recently created.
+			test -z "$opt_keep" && continue
+			KEEP="$opt_keep"
 
-		# ASSERT: The old snapshot list is sorted by increasing age.
-		if [ "$size_check_skip" -eq 0 ]; then  # if skip creating snapshots, then skip deleting old ones also
+			# ASSERT: The old snapshot list is sorted by increasing age.
 			for jj in $SNAPSHOTS_OLD
 			do
 				# Check whether this is an old snapshot of the filesystem.

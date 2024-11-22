@@ -39,7 +39,7 @@ opt_sep='_'
 opt_setauto=''
 opt_syslog=''
 opt_skip_scrub=''
-opt_verbose=''
+opt_verbose='0'
 opt_pre_snapshot=''
 opt_post_snapshot=''
 opt_do_snapshots=1
@@ -174,7 +174,7 @@ do_snapshots () # properties, flags, snapname, oldglob, [targets...]
 		if echo "$SNAPSHOTS_OLD" | grep -q "$ii@$NAME"
 		then
 			name_collision_skip=1
-			if [ $opt_verbose -gt 0 ]
+			if [ "$opt_verbose" -gt 0 ]
 			then
 				echo "Skipping target $ii, $ii@$NAME snapshot already exists."
 			fi
@@ -189,7 +189,7 @@ do_snapshots () # properties, flags, snapname, oldglob, [targets...]
 			if [ "$kb_written" -lt "$opt_min_size" ]
 			then
 				size_check_skip=1
-				if [ $opt_verbose -gt 0 ]
+				if [ "$opt_verbose" -gt 0 ]
 				then
 					echo "Skipping target $ii, only $kb_written kB written since last snap. opt_min_size is $opt_min_size kB."
 				fi
@@ -202,7 +202,7 @@ do_snapshots () # properties, flags, snapname, oldglob, [targets...]
 			if [ "$bytes_written" -eq 0 ]
 			then
 				size_check_skip=1
-				if [ $opt_verbose -gt 0 ]
+				if [ "$opt_verbose" -gt 0 ]
 				then
 					echo "Skipping target $ii, 0 bytes written since last snap."
 				fi
@@ -372,7 +372,7 @@ do
 		(-q|--quiet)
 			opt_debug=''
 			opt_quiet='1'
-			opt_verbose=''
+			opt_verbose='0'
 			shift 1
 			;;
 		(-r|--recursive)
